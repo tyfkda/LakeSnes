@@ -11,6 +11,10 @@
 #include "dsp.h"
 #include "statehandler.h"
 
+#ifdef NDEBUG
+#define printf(...)  // Suppress printf
+#endif
+
 static const int stateVersion = 2;
 /*
 1: initial version
