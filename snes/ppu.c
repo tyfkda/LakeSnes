@@ -331,12 +331,26 @@ static void ppu_handlePixel(Ppu* ppu, int x, int y) {
     }
   }
   int row = (y - 1) + (ppu->evenFrame ? 0 : 239);
-  ppu->pixelBuffer[row * 2048 + x * 8 + 0 + ppu->pixelOutputFormat] = ((b2 << 3) | (b2 >> 2)) * ppu->brightness / 15;
-  ppu->pixelBuffer[row * 2048 + x * 8 + 1 + ppu->pixelOutputFormat] = ((g2 << 3) | (g2 >> 2)) * ppu->brightness / 15;
-  ppu->pixelBuffer[row * 2048 + x * 8 + 2 + ppu->pixelOutputFormat] = ((r2 << 3) | (r2 >> 2)) * ppu->brightness / 15;
-  ppu->pixelBuffer[row * 2048 + x * 8 + 4 + ppu->pixelOutputFormat] = ((b << 3) | (b >> 2)) * ppu->brightness / 15;
-  ppu->pixelBuffer[row * 2048 + x * 8 + 5 + ppu->pixelOutputFormat] = ((g << 3) | (g >> 2)) * ppu->brightness / 15;
-  ppu->pixelBuffer[row * 2048 + x * 8 + 6 + ppu->pixelOutputFormat] = ((r << 3) | (r >> 2)) * ppu->brightness / 15;
+
+  static const int kPixelFormatOffsetTable[][4] = {
+    {0, 0, 1, 2},  // XBGR
+    {1, 1, 2, 3},  // BGRX
+    {3, 2, 1, 0},  // RGBA
+  };
+  const int *p = kPixelFormatOffsetTable[ppu->pixelOutputFormat];
+  const int xofs = p[0];
+  const int bofs = p[1];
+  const int gofs = p[2];
+  const int rofs = p[3];
+  int base = (row << 11) + (x << 3);  // (row * 2048) + (x * 8)
+  ppu->pixelBuffer[base + xofs    ] = 255;
+  ppu->pixelBuffer[base + bofs    ] = ((b2 << 3) | (b2 >> 2)) * ppu->brightness / 15;
+  ppu->pixelBuffer[base + gofs    ] = ((g2 << 3) | (g2 >> 2)) * ppu->brightness / 15;
+  ppu->pixelBuffer[base + rofs    ] = ((r2 << 3) | (r2 >> 2)) * ppu->brightness / 15;
+  ppu->pixelBuffer[base + xofs + 4] = 255;
+  ppu->pixelBuffer[base + bofs + 4] = ((b << 3) | (b >> 2)) * ppu->brightness / 15;
+  ppu->pixelBuffer[base + gofs + 4] = ((g << 3) | (g >> 2)) * ppu->brightness / 15;
+  ppu->pixelBuffer[base + rofs + 4] = ((r << 3) | (r >> 2)) * ppu->brightness / 15;
 }
 
 static int ppu_getPixel(Ppu* ppu, int x, int y, bool sub, int* r, int* g, int* b) {

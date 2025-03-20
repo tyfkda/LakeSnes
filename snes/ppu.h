@@ -130,7 +130,11 @@ struct Ppu {
   uint8_t pixelOutputFormat;
 };
 
-enum { ppu_pixelOutputFormatXBGR = 0, ppu_pixelOutputFormatBGRX = 1 };
+enum {
+  ppu_pixelOutputFormatXBGR = 0,
+  ppu_pixelOutputFormatBGRX = 1,
+  ppu_pixelOutputFormatRGBA = 2,
+};
 
 Ppu* ppu_init(Snes* snes);
 void ppu_free(Ppu* ppu);

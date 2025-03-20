@@ -144,7 +144,7 @@ void snes_setButtonState(Snes* snes, int player, int button, bool pressed) {
 
 void snes_setPixelFormat(Snes* snes, int pixelFormat) {
   // pixelFormatXRGB, pixelFormatRGBX (default: pixelFormatRGBX)
-  ppu_setPixelOutputFormat(snes->ppu, (pixelFormat) ? ppu_pixelOutputFormatBGRX : ppu_pixelOutputFormatXBGR);
+  ppu_setPixelOutputFormat(snes->ppu, pixelFormat);
 }
 
 void snes_setPixels(Snes* snes, uint8_t* pixelData) {
